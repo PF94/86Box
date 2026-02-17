@@ -26,6 +26,7 @@ add_library(utils OBJECT
     ini.c
     log.c
     random.c
+    corrupt.c
 
 )
 

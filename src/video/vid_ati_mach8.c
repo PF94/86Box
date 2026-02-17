@@ -43,6 +43,8 @@
 #include <86box/vid_ati_eeprom.h>
 #include <86box/vid_ati_mach8.h>
 
+#include <86box/corrupt.h>
+
 #define BIOS_MACH8_VGA_ROM_PATH  "roms/video/mach8/BIOS.BIN"
 #define BIOS_MACH32_ISA_ROM_PATH "roms/video/mach32/ATi Mach32 Graphics Pro ISA.BIN"
 #define BIOS_MACH32_VLB_ROM_PATH "roms/video/mach32/MACH32VLB.VBI"
@@ -3656,6 +3658,7 @@ mach_accel_out_fifo(mach_t *mach, svga_t *svga, ibm8514_t *dev, uint16_t port, u
 
         case 0xa2e8:
         case 0xe2e8:
+            CORRUPT(val, g_corrupt_gpu_colors);
             if (port == 0xe2e8) {
                 mach_log("%04X: Background Color=%04x, pix=%d, len=%d.\n", port, val, dev->accel.cmd_back, len);
                 if (len == 2) {
@@ -3697,6 +3700,7 @@ mach_accel_out_fifo(mach_t *mach, svga_t *svga, ibm8514_t *dev, uint16_t port, u
 
         case 0xa6e8:
         case 0xe6e8:
+            CORRUPT(val, g_corrupt_gpu_colors);
             if (port == 0xe6e8) {
                 mach_log("%04X: Foreground Color=%04x, pix=%d, len=%d.\n", port, val, dev->accel.cmd_back, len);
                 if (len == 2) {

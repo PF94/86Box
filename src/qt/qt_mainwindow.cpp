@@ -107,6 +107,8 @@ void qt_set_sequence_auto_mnemonic(bool b);
 #include "qt_mediamenu.hpp"
 #include "qt_util.hpp"
 
+#include "qt_corrupt.hpp"
+
 #if defined __unix__ && !defined __HAIKU__
 #    ifndef Q_OS_MACOS
 #        include "evdev_keyboard.hpp"
@@ -922,6 +924,9 @@ MainWindow::MainWindow(QWidget *parent)
 #endif
 
     updateShortcuts();
+
+    CorruptionWindow *corruptionWindow = new CorruptionWindow;
+    corruptionWindow->show();
 }
 
 void
