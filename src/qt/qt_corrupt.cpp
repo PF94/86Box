@@ -16,7 +16,6 @@ extern "C" {
 #include <QHBoxLayout>
 
 static CorruptionControl controls[] = {
-    { "GPU BG/FG",         corrupt_set_gpu_colors },
     { "GPU Input",         corrupt_set_gpu_in },
     { "GPU Output",        corrupt_set_gpu_out },
     { "GPU Render",        corrupt_set_gpu_render },

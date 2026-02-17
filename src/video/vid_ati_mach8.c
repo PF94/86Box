@@ -154,10 +154,12 @@ mach_log(const char *fmt, ...)
     if (dev->bpp)                                     \
         dat = vram_w[(addr) & (dev->vram_mask >> 1)]; \
     else                                              \
-        dat = (dev->vram[(addr) & (dev->vram_mask)]);
+        dat = (dev->vram[(addr) & (dev->vram_mask)]); \
+    CORRUPT(dat, g_corrupt_gpu_in);
 
 #define READ_HIGH(addr, dat)                            \
-    dat |= (dev->vram[(addr) & (dev->vram_mask)] << 8);
+    dat |= (dev->vram[(addr) & (dev->vram_mask)] << 8); \
+    CORRUPT(dat, g_corrupt_gpu_in);
 
 #define MIX(mixmode, dest_dat, src_dat)                                                               \
     {                                                                                                 \
@@ -259,6 +261,7 @@ mach_log(const char *fmt, ...)
 
 
 #define WRITE(addr, dat)                                                               \
+    CORRUPT(dat, g_corrupt_gpu_out);                                                \
     if (dev->bpp) {                                                                    \
         vram_w[((addr)) & (dev->vram_mask >> 1)]                    = dat;             \
         dev->changedvram[(((addr)) & (dev->vram_mask >> 1)) >> 11] = svga->monitor->mon_changeframecount; \
@@ -3658,7 +3661,7 @@ mach_accel_out_fifo(mach_t *mach, svga_t *svga, ibm8514_t *dev, uint16_t port, u
 
         case 0xa2e8:
         case 0xe2e8:
-            CORRUPT(val, g_corrupt_gpu_colors);
+            CORRUPT(val, g_corrupt_gpu_out);
             if (port == 0xe2e8) {
                 mach_log("%04X: Background Color=%04x, pix=%d, len=%d.\n", port, val, dev->accel.cmd_back, len);
                 if (len == 2) {
@@ -3700,7 +3703,7 @@ mach_accel_out_fifo(mach_t *mach, svga_t *svga, ibm8514_t *dev, uint16_t port, u
 
         case 0xa6e8:
         case 0xe6e8:
-            CORRUPT(val, g_corrupt_gpu_colors);
+            CORRUPT(val, g_corrupt_gpu_out);
             if (port == 0xe6e8) {
                 mach_log("%04X: Foreground Color=%04x, pix=%d, len=%d.\n", port, val, dev->accel.cmd_back, len);
                 if (len == 2) {
