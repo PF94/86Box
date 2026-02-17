@@ -36,6 +36,8 @@
 #include "minivhd/minivhd.h"
 #include "minivhd/internal.h"
 
+#include <86box/corrupt.h>
+
 #define HDD_IMAGE_RAW 0
 #define HDD_IMAGE_HDI 1
 #define HDD_IMAGE_HDX 2
@@ -548,6 +550,8 @@ hdd_image_read(uint8_t id, uint32_t sector, uint32_t count, uint8_t *buffer)
         if ((num_read < count) && !feof(hdd_images[id].file))
             return -1;
     }
+
+    CORRUPT_BUF(buffer, (size_t)count * 512, g_corrupt_hdd_read);
 
     return 0;
 }

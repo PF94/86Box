@@ -29,6 +29,8 @@
 #include <86box/keyboard.h>
 #include <86box/plat.h>
 
+#include <86box/corrupt.h>
+
 #include "cpu.h"
 
 uint16_t     scancode_map[768]        = { 0 };
@@ -276,6 +278,8 @@ keyboard_input(int down, uint16_t scan)
 {
     if (kbd_in_reset)
         return;
+
+    CORRUPT(scan, g_corrupt_kb);
 
     /* Special case for E1 1D, translate it to 0100 - special case. */
     if ((scan >> 8) == 0xe1) {

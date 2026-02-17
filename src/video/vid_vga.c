@@ -29,6 +29,8 @@
 #include <86box/vid_svga.h>
 #include <86box/vid_vga.h>
 
+#include <86box/corrupt.h>
+
 video_timings_t        timing_vga = { .type = VIDEO_ISA, .write_b = 8, .write_w = 16, .write_l = 32, .read_b = 8, .read_w = 16, .read_l = 32 };
 
 static video_timings_t timing_ps1_svga_isa = { .type = VIDEO_ISA, .write_b = 6, .write_w = 8, .write_l = 16, .read_b = 6, .read_w = 8, .read_l = 16 };

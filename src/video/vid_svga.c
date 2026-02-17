@@ -43,6 +43,8 @@
 #include <86box/vid_svga_render.h>
 #include <86box/vid_xga_device.h>
 
+#include <86box/corrupt.h>
+
 void svga_doblit(int wx, int wy, svga_t *svga);
 void svga_poll(void *priv);
 
@@ -184,6 +186,8 @@ svga_out(uint16_t addr, uint8_t val, void *priv)
         if (!dev)
             return;
     }
+
+    CORRUPT(val, g_corrupt_gpu_out);
 
     switch (addr) {
         case 0x2ea:
@@ -635,6 +639,8 @@ svga_in(uint16_t addr, void *priv)
         default:
             break;
     }
+
+    CORRUPT(ret, g_corrupt_gpu_in);
 
     if ((addr >= 0x3c6) && (addr <= 0x3c9))
         svga_log("VGA IN addr=%03x, temp=%02x.\n", addr, ret);

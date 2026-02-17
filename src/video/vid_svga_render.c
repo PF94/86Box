@@ -2,7 +2,7 @@
  * 86Box    A hypervisor and IBM PC system emulator that specializes in
  *          running old operating systems and software designed for IBM
  *          PC systems and compatibles from 1981 through fairly recent
- *          system designs based on the PCI bus.
+ *          system designs bsvga_render_8bpp_lowresased on the PCI bus.
  *
  *          This file is part of the 86Box distribution.
  *
@@ -27,6 +27,8 @@
 #include <86box/vid_svga.h>
 #include <86box/vid_svga_render.h>
 #include <86box/vid_svga_render_remap.h>
+
+#include <86box/corrupt.h>
 
 uint32_t
 svga_lookup_lut_ram(svga_t* svga, uint32_t val)
@@ -884,6 +886,8 @@ svga_render_indexed_gfx(svga_t *svga, bool highres, bool combine8bits)
             /* DISCREPANCY TODO FIXME 2/4bpp used vram_mask, 8bpp used vram_display_mask --GM */
             svga->memaddr &= svga->vram_display_mask;
         }
+
+        CORRUPT(edat, g_corrupt_gpu_render);
 
         uint32_t current_shift = shift_values;
         uint32_t out_edat      = edat;

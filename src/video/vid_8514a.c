@@ -41,6 +41,8 @@
 #include <86box/vid_ati_mach8.h>
 #include "cpu.h"
 
+#include <86box/corrupt.h>
+
 #ifdef CLAMP
 #    undef CLAMP
 #endif
@@ -3477,11 +3479,21 @@ ibm8514_render_8bpp(svga_t *svga)
             p[2] = dev->pallook[(dat >> 16) & dev->dac_mask & 0xff];
             p[3] = dev->pallook[(dat >> 24) & dev->dac_mask & 0xff];
 
+            CORRUPT(p[0], g_corrupt_gpu_render);
+            CORRUPT(p[1], g_corrupt_gpu_render);
+            CORRUPT(p[2], g_corrupt_gpu_render);
+            CORRUPT(p[3], g_corrupt_gpu_render);
+
             dat  = *(uint32_t *) (&dev->vram[(dev->memaddr + 4) & dev->vram_mask]);
             p[4] = dev->pallook[dat & dev->dac_mask & 0xff];
             p[5] = dev->pallook[(dat >> 8) & dev->dac_mask & 0xff];
             p[6] = dev->pallook[(dat >> 16) & dev->dac_mask & 0xff];
             p[7] = dev->pallook[(dat >> 24) & dev->dac_mask & 0xff];
+
+            CORRUPT(p[4], g_corrupt_gpu_render);
+            CORRUPT(p[5], g_corrupt_gpu_render);
+            CORRUPT(p[6], g_corrupt_gpu_render);
+            CORRUPT(p[7], g_corrupt_gpu_render);
 
             dev->memaddr += 8;
             p += 8;
