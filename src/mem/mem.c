@@ -55,6 +55,8 @@
 #    define BLOCK_INVALID    0
 #endif
 
+#include <86box/corrupt.h>
+
 mem_mapping_t ram_low_mapping;       /* 0..640K mapping */
 mem_mapping_t ram_mid_mapping;       /* 640..1024K mapping */
 mem_mapping_t ram_mid_mapping2;      /* 640..1024K mapping, second part, for SiS 471 in relocate mode  */
@@ -1623,6 +1625,8 @@ mem_readb_phys(uint32_t addr)
             ret = map->read_b(addr, map->priv);
     }
 
+    CORRUPT(ret, g_corrupt_ram);
+
     return ret;
 }
 
@@ -1638,9 +1642,11 @@ mem_readw_phys(uint32_t addr)
     if (cpu_use_exec && ((addr & MEM_GRANULARITY_MASK) <= MEM_GRANULARITY_HBOUND) && (map && map->exec)) {
         p   = (uint16_t *) &(map->exec[(addr - map->base) & map->mask]);
         ret = *p;
-    } else if (((addr & MEM_GRANULARITY_MASK) <= MEM_GRANULARITY_HBOUND) && (map && map->read_w))
+        CORRUPT(ret, g_corrupt_ram);
+    } else if (((addr & MEM_GRANULARITY_MASK) <= MEM_GRANULARITY_HBOUND) && (map && map->read_w)) {
         ret = map->read_w(addr, map->priv);
-    else {
+        CORRUPT(ret, g_corrupt_ram);
+    } else {
         ret = mem_readb_phys(addr + 1) << 8;
         ret |= mem_readb_phys(addr);
     }
@@ -1660,9 +1666,11 @@ mem_readl_phys(uint32_t addr)
     if (cpu_use_exec && ((addr & MEM_GRANULARITY_MASK) <= MEM_GRANULARITY_QBOUND) && (map && map->exec)) {
         p   = (uint32_t *) &(map->exec[(addr - map->base) & map->mask]);
         ret = *p;
-    } else if (((addr & MEM_GRANULARITY_MASK) <= MEM_GRANULARITY_QBOUND) && (map && map->read_l))
+        CORRUPT(ret, g_corrupt_ram);
+    } else if (((addr & MEM_GRANULARITY_MASK) <= MEM_GRANULARITY_QBOUND) && (map && map->read_l)) {
         ret = map->read_l(addr, map->priv);
-    else {
+        CORRUPT(ret, g_corrupt_ram);
+    } else {
         ret = mem_readw_phys(addr + 2) << 16;
         ret |= mem_readw_phys(addr);
     }
@@ -1692,6 +1700,8 @@ mem_read_phys(void *dest, uint32_t addr, int transfer_size)
 void
 mem_writeb_phys(uint32_t addr, uint8_t val)
 {
+    CORRUPT(val, g_corrupt_ram);
+
     mem_mapping_t *map = write_mapping_bus[addr >> MEM_GRANULARITY_BITS];
 
     mem_logical_addr = 0xffffffff;
@@ -1707,6 +1717,8 @@ mem_writeb_phys(uint32_t addr, uint8_t val)
 void
 mem_writew_phys(uint32_t addr, uint16_t val)
 {
+    CORRUPT(val, g_corrupt_ram);
+
     mem_mapping_t *map = write_mapping_bus[addr >> MEM_GRANULARITY_BITS];
     uint16_t      *p;
 
@@ -1726,6 +1738,8 @@ mem_writew_phys(uint32_t addr, uint16_t val)
 void
 mem_writel_phys(uint32_t addr, uint32_t val)
 {
+    CORRUPT(val, g_corrupt_ram);
+    
     mem_mapping_t *map = write_mapping_bus[addr >> MEM_GRANULARITY_BITS];
     uint32_t      *p;
 

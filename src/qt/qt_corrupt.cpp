@@ -16,8 +16,9 @@ extern "C" {
 #include <QHBoxLayout>
 
 static CorruptionControl controls[] = {
-    { "GPU Input",         corrupt_set_gpu_in },
-    { "GPU Output",        corrupt_set_gpu_out },
+    { "RAM",               corrupt_set_ram },
+    { "GPU In",            corrupt_set_gpu_in },
+    { "GPU Out",           corrupt_set_gpu_out },
     { "GPU Render",        corrupt_set_gpu_render },
     { "HDD Read",          corrupt_set_hdd_read },
     { "Keyboard Input",    corrupt_set_kb },

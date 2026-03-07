@@ -9,6 +9,7 @@
 #include <stddef.h>
 
 #define CORRUPTION_LIST(X) \
+    X(ram)                 \
     X(gpu_in)              \
     X(gpu_out)             \
     X(gpu_render)          \

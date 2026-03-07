@@ -38,6 +38,8 @@
 #include <86box/vid_voodoo_render.h>
 #include <86box/vid_voodoo_fb.h>
 
+#include <86box/corrupt.h>
+
 #ifdef ENABLE_VOODOO_FB_LOG
 int voodoo_fb_do_log = ENABLE_VOODOO_FB_LOG;
 
@@ -94,6 +96,8 @@ voodoo_fb_readw(uint32_t addr, void *priv)
 
     temp = *(uint16_t *) (&voodoo->fb_mem[read_addr & voodoo->fb_mask]);
 
+    CORRUPT(temp, g_corrupt_gpu_in);
+
     //        voodoo_fb_log("voodoo_fb_readw : %08X %08X  %i %i  %08X %08X  %08x:%08x %i\n", addr, temp, x, y, read_addr, *(uint32_t *)(&voodoo->fb_mem[4]), cs, pc, fb_reads++);
     return temp;
 }
@@ -134,6 +138,8 @@ voodoo_fb_readl(uint32_t addr, void *priv)
         return 0xffffffff;
 
     temp = *(uint32_t *) (&voodoo->fb_mem[read_addr & voodoo->fb_mask]);
+
+    CORRUPT(temp, g_corrupt_gpu_in);
 
     //        voodoo_fb_log("voodoo_fb_readl : %08X %08x %08X  x=%i y=%i  %08X %08X  %08x:%08x %i ro=%08x rw=%i\n", addr, read_addr, temp, x, y, read_addr, *(uint32_t *)(&voodoo->fb_mem[4]), cs, pc, fb_reads++, voodoo->fb_read_offset, voodoo->row_width);
     return temp;
@@ -183,6 +189,8 @@ voodoo_fb_writew(uint32_t addr, uint16_t val, void *priv)
 
     depth_data = voodoo->params.zaColor & 0xffff;
     alpha_data = voodoo->params.zaColor >> 24;
+
+    CORRUPT(val, g_corrupt_gpu_out);
 
 #if 0
     while (!RB_EMPTY)
@@ -342,6 +350,9 @@ voodoo_fb_writel(uint32_t addr, uint32_t val, void *priv)
 
     depth_data[0] = depth_data[1] = voodoo->params.zaColor & 0xffff;
     alpha_data[0] = alpha_data[1] = voodoo->params.zaColor >> 24;
+
+    CORRUPT(val, g_corrupt_gpu_out);
+
 #if 0
     while (!RB_EMPTY)
         thread_reset_event(voodoo->not_full_event);
