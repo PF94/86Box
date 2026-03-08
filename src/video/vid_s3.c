@@ -44,6 +44,8 @@
 #include <86box/vid_svga_render.h>
 #include "cpu.h"
 
+#include <86box/corrupt.h>
+
 #define ROM_ORCHID_86C911              "roms/video/s3/BIOS.BIN"
 #define ROM_DIAMOND_STEALTH_VRAM       "roms/video/s3/Diamond Stealth VRAM BIOS v2.31 U14.BIN"
 #define ROM_AMI_86C924                 "roms/video/s3/S3924AMI.BIN"
@@ -5135,12 +5137,13 @@ s3_accel_out(uint16_t port, uint8_t val, void *priv)
 {
     s3_t   *s3   = (s3_t *) priv;
     svga_t *svga = &s3->svga;
-
     s3_log("%04X:%08X: OUTB FIFO=%04x, val=%02x, 8514/A functions=%x.\n", CS, cpu_state.pc, port, val, s3->enable_8514);
 
     if (port >= 0x8000) {
         if (!s3->enable_8514)
             return;
+
+        CORRUPT(val, g_corrupt_gpu_out);
 
         if (s3_enable_fifo(s3))
             s3_queue(s3, port, val, FIFO_OUT_BYTE);
@@ -5439,6 +5442,8 @@ s3_accel_in(uint16_t port, void *priv)
                 } else
                     temp2 = s3->accel.bkgd_color & 0xff;
 
+                CORRUPT(temp2, g_corrupt_gpu_in);
+                
                 return temp2;
             }
             break;
@@ -5475,6 +5480,9 @@ s3_accel_in(uint16_t port, void *priv)
                             s3->accel.multifunc[0xe] ^= 0x10;
                     }
                 }
+
+                CORRUPT(temp2, g_corrupt_gpu_in);
+
                 return temp2;
             }
             break;
@@ -5491,6 +5499,9 @@ s3_accel_in(uint16_t port, void *priv)
                 else
                     temp2 = s3->accel.bkgd_color >> 16;
             }
+
+            CORRUPT(temp2, g_corrupt_gpu_in);
+
             return temp2;
         case 0xa14b:
         case 0xa2eb:
@@ -5507,6 +5518,9 @@ s3_accel_in(uint16_t port, void *priv)
 
                 s3->accel.multifunc[0xe] ^= 0x10;
             }
+
+            CORRUPT(temp2, g_corrupt_gpu_in);
+
             return temp2;
         case 0xa548:
         case 0xa6e8:
@@ -5528,6 +5542,9 @@ s3_accel_in(uint16_t port, void *priv)
                     }
                 } else
                     temp2 = s3->accel.frgd_color & 0xff;
+
+
+                CORRUPT(temp2, g_corrupt_gpu_in);
 
                 return temp2;
             }
@@ -5565,6 +5582,9 @@ s3_accel_in(uint16_t port, void *priv)
                             s3->accel.multifunc[0xe] ^= 0x10;
                     }
                 }
+
+                CORRUPT(temp2, g_corrupt_gpu_in);
+
                 return temp2;
             }
             break;
@@ -5581,6 +5601,9 @@ s3_accel_in(uint16_t port, void *priv)
                 else
                     temp2 = s3->accel.frgd_color >> 16;
             }
+
+            CORRUPT(temp2, g_corrupt_gpu_in);
+
             return temp2;
         case 0xa54b:
         case 0xa6eb:
@@ -5597,6 +5620,9 @@ s3_accel_in(uint16_t port, void *priv)
 
                 s3->accel.multifunc[0xe] ^= 0x10;
             }
+
+            CORRUPT(temp2, g_corrupt_gpu_in);
+
             return temp2;
 
         case 0xa948:
@@ -5619,6 +5645,8 @@ s3_accel_in(uint16_t port, void *priv)
                     }
                 } else
                     temp2 = s3->accel.wrt_mask & 0xff;
+
+                CORRUPT(temp2, g_corrupt_gpu_in);
 
                 return temp2;
             }
@@ -5656,6 +5684,9 @@ s3_accel_in(uint16_t port, void *priv)
                             s3->accel.multifunc[0xe] ^= 0x10;
                     }
                 }
+
+                CORRUPT(temp2, g_corrupt_gpu_in);
+
                 return temp2;
             }
             break;
@@ -5672,6 +5703,9 @@ s3_accel_in(uint16_t port, void *priv)
                 else
                     temp2 = s3->accel.wrt_mask >> 16;
             }
+
+            CORRUPT(temp2, g_corrupt_gpu_in);
+
             return temp2;
         case 0xa94b:
         case 0xaaeb:
@@ -5688,6 +5722,9 @@ s3_accel_in(uint16_t port, void *priv)
 
                 s3->accel.multifunc[0xe] ^= 0x10;
             }
+
+            CORRUPT(temp2, g_corrupt_gpu_in);
+
             return temp2;
 
         case 0xad48:
@@ -5710,6 +5747,8 @@ s3_accel_in(uint16_t port, void *priv)
                     }
                 } else
                     temp2 = s3->accel.rd_mask & 0xff;
+
+                CORRUPT(temp2, g_corrupt_gpu_in);
 
                 return temp2;
             }
@@ -5748,6 +5787,8 @@ s3_accel_in(uint16_t port, void *priv)
                     }
                 }
 
+                CORRUPT(temp2, g_corrupt_gpu_in);
+
                 return temp2;
             }
             break;
@@ -5764,6 +5805,9 @@ s3_accel_in(uint16_t port, void *priv)
                 else
                     temp2 = s3->accel.rd_mask >> 16;
             }
+
+            CORRUPT(temp2, g_corrupt_gpu_in);
+
             return temp2;
         case 0xad4b:
         case 0xaeeb:
@@ -5780,6 +5824,9 @@ s3_accel_in(uint16_t port, void *priv)
 
                 s3->accel.multifunc[0xe] ^= 0x10;
             }
+
+            CORRUPT(temp2, g_corrupt_gpu_in);
+
             return temp2;
 
         case 0xb148:
@@ -5802,6 +5849,8 @@ s3_accel_in(uint16_t port, void *priv)
                     }
                 } else
                     temp2 = s3->accel.color_cmp & 0xff;
+
+                CORRUPT(temp2, g_corrupt_gpu_in);
 
                 return temp2;
             }
@@ -5839,6 +5888,9 @@ s3_accel_in(uint16_t port, void *priv)
                             s3->accel.multifunc[0xe] ^= 0x10;
                     }
                 }
+
+                CORRUPT(temp2, g_corrupt_gpu_in);
+
                 return temp2;
             }
             break;
@@ -5850,6 +5902,8 @@ s3_accel_in(uint16_t port, void *priv)
                 temp2 = s3->accel.color_cmp & 0xff;
             else
                 temp2 = s3->accel.color_cmp >> 16;
+
+            CORRUPT(temp2, g_corrupt_gpu_in);
 
             return temp2;
         case 0xb14b:
@@ -5863,6 +5917,9 @@ s3_accel_in(uint16_t port, void *priv)
 
             if (!(s3->accel.multifunc[0xe] & 0x200))
                 s3->accel.multifunc[0xe] ^= 0x10;
+
+            CORRUPT(temp2, g_corrupt_gpu_in);
+
             return temp2;
 
         case 0xb548:
@@ -6039,6 +6096,8 @@ s3_accel_in(uint16_t port, void *priv)
             } else
                 temp2 = s3->accel.pat_bg_color & 0xff;
 
+            CORRUPT(temp2, g_corrupt_gpu_in);
+
             return temp2;
 
         case 0xe549:
@@ -6060,6 +6119,8 @@ s3_accel_in(uint16_t port, void *priv)
             if (!(s3->accel.multifunc[0xe] & 0x200))
                 s3->accel.multifunc[0xe] ^= 0x10;
 
+            CORRUPT(temp2, g_corrupt_gpu_in);
+
             return temp2;
 
         case 0xe54a:
@@ -6075,6 +6136,9 @@ s3_accel_in(uint16_t port, void *priv)
                 else
                     temp2 = s3->accel.pat_bg_color >> 16;
             }
+        
+            CORRUPT(temp2, g_corrupt_gpu_in);
+
             return temp2;
 
         case 0xe54b:
@@ -6092,6 +6156,9 @@ s3_accel_in(uint16_t port, void *priv)
 
                 s3->accel.multifunc[0xe] ^= 0x10;
             }
+
+            CORRUPT(temp2, g_corrupt_gpu_in);
+
             return temp2;
 
         case 0xe948:
@@ -6131,6 +6198,8 @@ s3_accel_in(uint16_t port, void *priv)
             } else
                 temp2 = s3->accel.pat_fg_color & 0xff;
 
+            CORRUPT(temp2, g_corrupt_gpu_in);
+
             return temp2;
 
         case 0xed49:
@@ -6152,6 +6221,8 @@ s3_accel_in(uint16_t port, void *priv)
             if (!(s3->accel.multifunc[0xe] & 0x200))
                 s3->accel.multifunc[0xe] ^= 0x10;
 
+            CORRUPT(temp2, g_corrupt_gpu_in);
+
             return temp2;
 
         case 0xed4a:
@@ -6167,6 +6238,9 @@ s3_accel_in(uint16_t port, void *priv)
                 else
                     temp2 = s3->accel.pat_fg_color >> 16;
             }
+
+            CORRUPT(temp2, g_corrupt_gpu_in);
+            
             return temp2;
 
         case 0xed4b:
@@ -6184,6 +6258,9 @@ s3_accel_in(uint16_t port, void *priv)
 
                 s3->accel.multifunc[0xe] ^= 0x10;
             }
+
+            CORRUPT(temp2, g_corrupt_gpu_in);
+
             return temp2;
 
         case 0xe148:

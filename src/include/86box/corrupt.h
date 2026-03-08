@@ -14,6 +14,7 @@
     X(gpu_out)             \
     X(gpu_render)          \
     X(hdd_read)            \
+    X(hdd_write)           \
     X(kb)                  \
 
 #define DECLARE_EXTERN(name) \

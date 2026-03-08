@@ -591,6 +591,8 @@ hdd_image_write(uint8_t id, uint32_t sector, uint32_t count, uint8_t *buffer)
     int    non_transferred_sectors;
     size_t num_write;
 
+    CORRUPT_BUF(buffer, (size_t)count * 512, g_corrupt_hdd_write);
+
     if (hdd_images[id].type == HDD_IMAGE_VHD) {
         hdd_images[id].vhd->error = 0;
         non_transferred_sectors   = mvhd_write_sectors(hdd_images[id].vhd, sector, count, buffer);
