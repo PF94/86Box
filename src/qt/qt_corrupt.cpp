@@ -21,7 +21,8 @@ static CorruptionControl controls[] = {
     { "GPU Out",           corrupt_set_gpu_out },
     { "GPU Render",        corrupt_set_gpu_render },
     { "HDD Read",          corrupt_set_hdd_read },
-    { "Keyboard Input",    corrupt_set_kb },
+    { "HDD Write",         corrupt_set_hdd_write },
+    { "Keyboard",          corrupt_set_kb },
 };
 
 CorruptionWindow::CorruptionWindow(QWidget *parent)
